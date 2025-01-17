@@ -7,27 +7,56 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+
+
+// const sampleQueries = [
+//   {
+//     text: "Pool Overview",
+//     query:
+//       "Get information about pool 0x52ac89ee8c446638930f53129803f026a04028d2c0deef314321f71c69ab7f78",
+//     category: "Analysis",
+//   },
+//   {
+//     text: "Top 10 Pools",
+//     query: "What are the top 10 pools by tvl?",
+//     category: "Rankings",
+//   },
+//   {
+//     text: "Spot Price",
+//     query:
+//       "What's the spot price between afSUI and ksui in pool 0x52ac89ee8c446638930f53129803f026a04028d2c0deef314321f71c69ab7f78?",
+//     category: "Price",
+//   },
+//   {
+//     text: "Token Prices",
+//     query: "Show me the prices of SUI, USDC, and BTC",
+//     category: "Market",
+//   },
+//];
 const SUGGESTED_PROMPTS = [
   {
-    title: "Check Token Balance",
-    prompt: "What's my SUI token balance?",
+    title: "Pool Overview",
+    prompt:
+      "Get information about pool 0x52ac89ee8c446638930f53129803f026a04028d2c0deef314321f71c69ab7f78",
+    display:" get information about pool 0x52ac89ee8c44663893...... "
+  },
+   
+  {
+    title: "Top 10 Pools",
+    prompt: "What are the top 10 pools by tvl?",
+    
   },
   {
-    title: "Pool Information",
-    prompt: "Show me the SUI/USDC pool details",
+    title: "Spot Price",
+    prompt:
+      "What's the spot price between afSUI and ksui in pool 0x52ac89ee8c446638930f53129803f026a04028d2c0deef314321f71c69ab7f78?",
+    display:"What's the spot price between afSUI and ksui in pool 0x52ac89ee8c446..."
   },
   {
-    title: "Recent Transactions",
-    prompt: "Show my recent transactions",
+    title: "Token Prices",
+    prompt: "Show me the prices of SUI, USDC, and BTC",
   },
-  {
-    title: "Token Price",
-    prompt: "What's the current price of SUI?",
-  },
-  {
-    title: "Gas Fees",
-    prompt: "What are the current gas fees?",
-  },
+ 
 ];
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
@@ -93,7 +122,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   >
                     {item.title}
                     <span className="block text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      {item.prompt}
+                      {item?.display?item.display:item.prompt}
                     </span>
                   </button>
                 ))}
