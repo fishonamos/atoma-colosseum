@@ -1,4 +1,4 @@
-import { NetworkConfigs } from "./types";
+import { NetworkConfigs } from "../../../@types";
 
 // Network configuration
 export const NETWORK_CONFIG: NetworkConfigs = {

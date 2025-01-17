@@ -1,5 +1,5 @@
 import { Aftermath } from "aftermath-ts-sdk";
-import { PoolInfo, TokenPrice } from "../common/types";
+import { PoolInfo, TokenPrice } from "../../../../@types";
 
 /** --------------------------------------------------------------------------
  *                            Initialization

@@ -65,3 +65,9 @@ export interface LendingInfo {
   borrowingApr: number;
   utilization: number;
 }
+
+export interface ActionResult {
+  tool: string;
+  result: unknown;
+}
+

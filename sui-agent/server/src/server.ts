@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { getPriceInfo } from "../agent/agents";
+import { getPriceInfo } from "./agent/agents";
 
 const app = express();
 app.use(cors());
@@ -26,22 +26,19 @@ app.post("/api/query", async (req: Request, res: any) => {
         setTimeout(() => reject(new Error("Request timeout")), TIMEOUT)
       ),
     ])) as QueryResult;
-    
+
     if (result.status === "needs_info") {
       return res.status(202).json(result); // 202 Accepted but needs more info
     }
     if (result.status === "error") {
-      return res.status(400).json(result); 
+      return res.status(400).json(result);
     }
     return res.status(200).json(result);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        status: "error",
-        error:
-          error instanceof Error ? error.message : "Unknown error occurred",
-      });
+    res.status(500).json({
+      status: "error",
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    });
   }
 
   // try {

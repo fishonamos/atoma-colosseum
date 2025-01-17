@@ -1,30 +1,12 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.aprToApy = aprToApy;
-exports.apyToApr = apyToApr;
-exports.calculateLendingRate = calculateLendingRate;
-exports.calculateUtilization = calculateUtilization;
-exports.calculateImpermanentLoss = calculateImpermanentLoss;
-exports.getPoolApr = getPoolApr;
-exports.getLendingRate = getLendingRate;
-exports.getBestLendingOpportunities = getBestLendingOpportunities;
-exports.calculatePoolImpermanentLoss = calculatePoolImpermanentLoss;
-exports.getLendingRates = getLendingRates;
-const PriceAnalysis_1 = require("../markets/PriceAnalysis");
+import { getPool, getAllPools } from "../markets/PriceAnalysis";
+import { PoolInfo, LendingInfo } from "../../../../@types";
+
 /** --------------------------------------------------------------------------
  *                            Yield Analysis
  *
  * --------------------------------------------------------------------------
  */
+
 /**
  * Converts Annual Percentage Rate (APR) to Annual Percentage Yield (APY)
  *
@@ -39,9 +21,15 @@ const PriceAnalysis_1 = require("../markets/PriceAnalysis");
  * const apy = aprToApy(0.05); // 5% APR
  * console.log(`APY: ${apy}%`); // APY: 5.127%
  */
-function aprToApy(apr, compoundingFrequency = 365) {
-    return ((Math.pow(1 + apr / compoundingFrequency, compoundingFrequency) - 1) * 100);
+export function aprToApy(
+  apr: number,
+  compoundingFrequency: number = 365
+): number {
+  return (
+    (Math.pow(1 + apr / compoundingFrequency, compoundingFrequency) - 1) * 100
+  );
 }
+
 /**
  * Converts Annual Percentage Yield (APY) to Annual Percentage Rate (APR)
  *
@@ -49,16 +37,23 @@ function aprToApy(apr, compoundingFrequency = 365) {
  * @param compoundingFrequency - Number of times interest is compounded per year
  * @returns The APR as a percentage
  */
-function apyToApr(apy, compoundingFrequency = 365) {
-    return ((Math.pow(1 + apy, 1 / compoundingFrequency) - 1) *
-        compoundingFrequency *
-        100);
+export function apyToApr(
+  apy: number,
+  compoundingFrequency: number = 365
+): number {
+  return (
+    (Math.pow(1 + apy, 1 / compoundingFrequency) - 1) *
+    compoundingFrequency *
+    100
+  );
 }
+
 /** --------------------------------------------------------------------------
  *                            Yield Calculations
  *
  * --------------------------------------------------------------------------
  */
+
 /**
  * Calculates the lending interest rate based on pool utilization
  *
@@ -74,9 +69,14 @@ function apyToApr(apy, compoundingFrequency = 365) {
  * const rate = calculateLendingRate(75); // 75% utilization
  * console.log(`Lending rate: ${rate}%`); // 17%
  */
-function calculateLendingRate(utilization, baseRate = 0.02, multiplier = 0.2) {
-    return baseRate + utilization * multiplier;
+export function calculateLendingRate(
+  utilization: number,
+  baseRate: number = 0.02,
+  multiplier: number = 0.2
+): number {
+  return baseRate + utilization * multiplier;
 }
+
 /**
  * Calculates the utilization ratio of a lending pool
  *
@@ -84,9 +84,13 @@ function calculateLendingRate(utilization, baseRate = 0.02, multiplier = 0.2) {
  * @param supplied - Total supply in the pool
  * @returns The utilization ratio as a percentage
  */
-function calculateUtilization(borrowed, supplied) {
-    return (borrowed / supplied) * 100;
+export function calculateUtilization(
+  borrowed: number,
+  supplied: number
+): number {
+  return (borrowed / supplied) * 100;
 }
+
 /**
  * Calculates impermanent loss for a liquidity position
  *
@@ -103,12 +107,17 @@ function calculateUtilization(borrowed, supplied) {
  * const loss = calculateImpermanentLoss(1000, 1500, 0.1);
  * console.log(`Impermanent loss: ${loss}%`);
  */
-function calculateImpermanentLoss(initialPrice, currentPrice, poolShare) {
-    const priceRatio = currentPrice / initialPrice;
-    const sqrtRatio = Math.sqrt(priceRatio);
-    const impLoss = (2 * sqrtRatio) / (1 + priceRatio) - 1;
-    return impLoss * poolShare * 100;
+export function calculateImpermanentLoss(
+  initialPrice: number,
+  currentPrice: number,
+  poolShare: number
+): number {
+  const priceRatio = currentPrice / initialPrice;
+  const sqrtRatio = Math.sqrt(priceRatio);
+  const impLoss = (2 * sqrtRatio) / (1 + priceRatio) - 1;
+  return impLoss * poolShare * 100;
 }
+
 /**
  * Fetches and calculates the APY for a specific pool
  *
@@ -123,11 +132,13 @@ function calculateImpermanentLoss(initialPrice, currentPrice, poolShare) {
  * const apy = await getPoolApy("pool_123");
  * console.log(`Pool APY: ${apy}%`);
  */
+
 /** --------------------------------------------------------------------------
  *                            Pool Operations
  *
  * --------------------------------------------------------------------------
  */
+
 /**
  * Fetches and calculates the APR for a specific pool
  *
@@ -142,16 +153,19 @@ function calculateImpermanentLoss(initialPrice, currentPrice, poolShare) {
  * const apr = await getPoolApr("pool_123");
  * console.log(`Pool APR: ${apr}%`);
  */
-function getPoolApr(poolId, network) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const pool = yield (0, PriceAnalysis_1.getPool)(poolId, network);
-        if (!pool) {
-            throw new Error(`Pool not found: ${poolId}`);
-        }
-        // The APR is already calculated in PriceAnalysis
-        return pool.apr;
-    });
+export async function getPoolApr(
+  poolId: string,
+  network?: "MAINNET" | "TESTNET"
+): Promise<number> {
+  const pool = await getPool(poolId, network);
+  if (!pool) {
+    throw new Error(`Pool not found: ${poolId}`);
+  }
+
+  // The APR is already calculated in PriceAnalysis
+  return pool.apr;
 }
+
 /**
  * Calculates the lending rate for a specific pool
  *
@@ -160,16 +174,23 @@ function getPoolApr(poolId, network) {
  * @param multiplier - Rate multiplier
  * @returns The lending rate as a percentage
  */
-function getLendingRate(poolId_1) {
-    return __awaiter(this, arguments, void 0, function* (poolId, baseRate = 0.02, multiplier = 0.2, network) {
-        var _a, _b, _c, _d;
-        const pool = yield (0, PriceAnalysis_1.getPool)(poolId, network);
-        if (!pool)
-            throw new Error("Pool not found");
-        const utilization = calculateUtilization(Number((_b = (_a = pool === null || pool === void 0 ? void 0 : pool.reserves) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : 0), Number((_d = (_c = pool === null || pool === void 0 ? void 0 : pool.reserves) === null || _c === void 0 ? void 0 : _c[1]) !== null && _d !== void 0 ? _d : 0));
-        return calculateLendingRate(utilization, baseRate, multiplier);
-    });
+export async function getLendingRate(
+  poolId: string,
+  baseRate: number = 0.02,
+  multiplier: number = 0.2,
+  network?: "MAINNET" | "TESTNET"
+): Promise<number> {
+  const pool = await getPool(poolId, network);
+  if (!pool) throw new Error("Pool not found");
+
+  const utilization = calculateUtilization(
+    Number(pool?.reserves?.[0] ?? 0),
+    Number(pool?.reserves?.[1] ?? 0)
+  );
+
+  return calculateLendingRate(utilization, baseRate, multiplier);
 }
+
 /**
  * Retrieves the best lending opportunities across all pools
  *
@@ -185,14 +206,16 @@ function getLendingRate(poolId_1) {
  *   console.log(`Pool ${pool.id}: ${pool.apy}% APY`);
  * });
  */
-function getBestLendingOpportunities() {
-    return __awaiter(this, arguments, void 0, function* (minApr = 5, network) {
-        const allPools = yield (0, PriceAnalysis_1.getAllPools)(network);
-        return allPools
-            .filter((pool) => (pool.apr || 0) >= minApr)
-            .sort((a, b) => (b.apr || 0) - (a.apr || 0));
-    });
+export async function getBestLendingOpportunities(
+  minApr: number = 5,
+  network?: "MAINNET" | "TESTNET"
+): Promise<PoolInfo[]> {
+  const allPools = await getAllPools(network);
+  return allPools
+    .filter((pool) => (pool.apr || 0) >= minApr)
+    .sort((a, b) => (b.apr || 0) - (a.apr || 0));
 }
+
 /**
  * Calculates impermanent loss for a specific pool position
  *
@@ -201,27 +224,36 @@ function getBestLendingOpportunities() {
  * @param poolShare - Share of the pool owned
  * @returns The impermanent loss as a percentage
  */
-function calculatePoolImpermanentLoss(initialPrice, currentPrice, poolShare) {
-    return calculateImpermanentLoss(initialPrice, currentPrice, poolShare);
+export function calculatePoolImpermanentLoss(
+  initialPrice: number,
+  currentPrice: number,
+  poolShare: number
+): number {
+  return calculateImpermanentLoss(initialPrice, currentPrice, poolShare);
 }
-function getLendingRates(asset_1) {
-    return __awaiter(this, arguments, void 0, function* (asset, network = "mainnet") {
-        const borrowed = 1000; // Example values, replace with actual data
-        const supplied = 2000;
-        return {
-            asset,
-            lendingApr: calculateLendingApr(borrowed, supplied),
-            borrowingApr: calculateBorrowingApr(borrowed, supplied),
-            utilization: calculateUtilization(borrowed, supplied),
-        };
-    });
+
+export async function getLendingRates(
+  asset: string,
+  network: string = "mainnet"
+): Promise<LendingInfo> {
+  const borrowed = 1000; // Example values, replace with actual data
+  const supplied = 2000;
+
+  return {
+    asset,
+    lendingApr: calculateLendingApr(borrowed, supplied),
+    borrowingApr: calculateBorrowingApr(borrowed, supplied),
+    utilization: calculateUtilization(borrowed, supplied),
+  };
 }
+
 // Update any APY calculations to APR
-function calculateLendingApr(borrowed, supplied) {
-    // Temporary implementation
-    return 0;
+function calculateLendingApr(borrowed: number, supplied: number): number {
+  // Temporary implementation
+  return 0;
 }
-function calculateBorrowingApr(borrowed, supplied) {
-    // Temporary implementation
-    return 0;
+
+function calculateBorrowingApr(borrowed: number, supplied: number): number {
+  // Temporary implementation
+  return 0;
 }
