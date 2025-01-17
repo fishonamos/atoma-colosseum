@@ -44,7 +44,7 @@ export default function Home() {
         });
       }
     } catch (error) {
-      console.error('API Error:', error);
+     console.log(error)
       addMessage({ 
         role: 'ai', 
         content: 'Sorry, I encountered an error processing your request.' 
@@ -65,7 +65,7 @@ export default function Home() {
             <div className={`max-w-[80%] rounded-lg p-4 ${
               message.role === 'user' 
                 ? 'bg-blue-600 text-white' 
-                : 'bg-gray-100 dark:bg-gray-800'
+                : 'bg-gray-100 '
             }`}>
               {message.content}
             </div>
@@ -74,7 +74,7 @@ export default function Home() {
       </div>
 
       {/* Chat input */}
-      <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+      <div className="border-t border-gray-200  p-4">
         <div className="max-w-2xl mx-auto">
           <div className="relative">
             <input
@@ -82,7 +82,7 @@ export default function Home() {
               value={query}
               onChange={handleQueryChange}
               placeholder="Ask anything about Sui..."
-              className="w-full p-4 pr-12 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-4 pr-12 rounded-lg border border-gray-200 bg-white  focus:outline-none focus:ring-2 focus:ring-blue-500"
               onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
             />
             <button 

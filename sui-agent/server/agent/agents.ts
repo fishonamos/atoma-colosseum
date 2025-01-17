@@ -17,6 +17,7 @@ import {
   getDcaOrders,
 } from "../markets/PriceAnalysis";
 import { COIN_ADDRESSES } from "../common/config";
+import { TokenPrice } from "../common/types";
 
 // Initialize the Atoma SDK with proper authentication
 const atomaSDK = new AtomaSDK({
@@ -214,7 +215,7 @@ async function getPriceInfo(query: string) {
         console.log("Input parameters:", action.input);
 
         // Execute the appropriate tool
-        let result = null;
+        let result:unknown = null;
         switch (action.tool) {
           case "get_token_price":
             result = await getTokenPrice(

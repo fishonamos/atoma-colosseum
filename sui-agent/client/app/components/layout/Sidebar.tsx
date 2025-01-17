@@ -56,13 +56,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 w-64 bg-gray-50 dark:bg-gray-900 transform transition-transform duration-300 ease-in-out z-30 lg:transform-none ${
+        className={`fixed lg:static inset-y-0 left-0 w-64 bg-gray-50 transform transition-transform duration-300 ease-in-out z-30 lg:transform-none ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="h-full flex flex-col">
           {/* Logo section */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+          <div className="p-4 border-b border-gray-200 ">
             <div className="flex items-center gap-2">
               {/* <Image
                 src="/logo.svg"
@@ -89,7 +89,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <button
                     key={index}
                     onClick={() => handlePromptClick(item.prompt)}
-                    className="w-full text-left p-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors border border-gray-200 dark:border-gray-700"
+                    className="w-full text-left p-2 text-sm rounded-lg hover:bg-gray-100  transition-colors border border-gray-200 dark:border-gray-700"
                   >
                     {item.title}
                     <span className="block text-xs text-gray-500 dark:text-gray-400 mt-1">

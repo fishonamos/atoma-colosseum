@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const TIMEOUT = 30000; // 30 seconds timeout
+const TIMEOUT = 30000;
 
 interface QueryResult {
   status: "success" | "error" | "needs_info";
@@ -14,7 +14,7 @@ interface QueryResult {
   final_answer?: string;
   reasoning?: string;
   results?: any[];
-  request?: string; // For needs_info status
+  request?: string;
 }
 
 app.post("/api/query", async (req, res) => {
@@ -28,7 +28,6 @@ app.post("/api/query", async (req, res) => {
       ),
     ])) as QueryResult;
 
-    // Handle different response types
     if (result.status === "needs_info") {
       return res.status(202).json(result); // 202 Accepted but needs more info
     }

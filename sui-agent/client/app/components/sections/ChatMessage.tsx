@@ -11,8 +11,8 @@ export default function ChatMessage({ role, content }: ChatMessageProps) {
           ${role === 'ai' ? 'bg-blue-600' : 'bg-green-600'}`}>
           {role === 'ai' ? 'AI' : 'U'}
         </div>
-        <div className="flex-1 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-          <div className="text-gray-800 dark:text-gray-200">
+        <div className="flex-1 bg-white rounded-lg p-4 shadow-sm">
+          <div className="text-gray-800 ">
             {content}
           </div>
         </div>
