@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import path from "path";
 import { getPriceInfo } from "./utils/getPriceInfo";
-import { error } from "console";
+
 
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 

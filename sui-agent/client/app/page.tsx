@@ -20,13 +20,16 @@ export default function Home() {
   }
 
   async function handleSubmit() {
+    console.log('here')
     if (!query.trim()) return;
 
     // Add user message
     addMessage({ role: 'user', content: query });
     
     try {
+      console.log(api,'na here i dey')
       const res = await api.post('/query', { query });
+      
       const data = res.data as QueryResult;
       console.log(data)
       // Handle different response types
@@ -76,7 +79,7 @@ export default function Home() {
       {/* Chat input */}
       <div className="border-t border-gray-200  p-4">
         <div className="max-w-2xl mx-auto">
-          <div className="relative">
+          <div className="relative ">
             <input
               type="text"
               value={query}

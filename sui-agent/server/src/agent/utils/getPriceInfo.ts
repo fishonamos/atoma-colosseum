@@ -1,18 +1,14 @@
-import {
-  getTokenPrice,
-  getCoinsPriceInfo,
-  getPool,
-  getAllPools,
-  getPoolSpotPrice,
-  getTradeRoute,
-  getStakingPositions,
-  getDcaOrders,
-} from "../tools";
+
 import { COIN_ADDRESSES } from "../config/config";
 import { formatPoolInfo } from "./FormatPoolInfo";
 import createPricePrompt from "../prompts/pricePrompt";
 import atomaSDK from "../config/atoma";
 import { ActionResult } from "../../../@types";
+import extractJsonString from "./extractJsonString";
+import executeAction from "./executeAction";
+
+
+
 export async function getPriceInfo(query: string) {
   try {
     // Get AI response
@@ -32,7 +28,7 @@ export async function getPriceInfo(query: string) {
     const jsonMatch =
       content.match(/```(?:json)?\n([\s\S]*?)\n```/) ||
       content.match(/({[\s\S]*})/);
-    const jsonString = jsonMatch ? jsonMatch[1].trim() : content.trim();
+    const jsonString = extractJsonString(content);
 
     try {
       // Parse the AI response
@@ -50,7 +46,6 @@ export async function getPriceInfo(query: string) {
         };
       }
 
-      
       const results: ActionResult[] = [];
       for (const action of aiResponse.actions) {
         console.log(`Executing action: ${action.tool}`);
@@ -58,56 +53,12 @@ export async function getPriceInfo(query: string) {
 
         // Execute the appropriate tool
         let result: unknown = null;
-        switch (action.tool) {
-          case "get_token_price":
-            result = await getTokenPrice(
-              action.input.token_type,
-              action.input.network
-            );
-            break;
-          case "get_coins_price_info":
-            result = await getCoinsPriceInfo(
-              action.input.coins,
-              action.input.network
-            );
-            break;
-          case "get_pool_info":
-            result = await getPool(action.input.pool_id, action.input.network);
-            break;
-          case "get_all_pools":
-            result = await getAllPools(action.input.network);
-            break;
-          case "get_pool_spot_price":
-            result = await getPoolSpotPrice(
-              action.input.pool_id,
-              action.input.coin_in_type,
-              action.input.coin_out_type,
-              action.input.with_fees,
-              action.input.network
-            );
-            break;
-          case "get_trade_route":
-            result = await getTradeRoute(
-              action.input.coin_in_type,
-              action.input.coin_out_type,
-              BigInt(action.input.coin_in_amount),
-              action.input.network
-            );
-            break;
-          case "get_staking_positions":
-            result = await getStakingPositions(
-              action.input.wallet_address,
-              action.input.network
-            );
-            break;
-          case "get_dca_orders":
-            result = await getDcaOrders(
-              action.input.wallet_address,
-              action.input.network
-            );
-            break;
+        try {
+          result = await executeAction(action);
+        } catch (error) {
+          console.error("Failed to execute action:", error);
+          throw new Error("Failed to execute action");
         }
-
         results.push({
           tool: action.tool,
           result,
