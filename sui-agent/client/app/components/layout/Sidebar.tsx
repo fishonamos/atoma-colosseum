@@ -47,6 +47,10 @@ const SUGGESTED_PROMPTS = [
     
   },
   {
+    title:"SUI price",
+    prompt:"What is the current price of SUI?",
+  },
+  {
     title: "Spot Price",
     prompt:
       "What's the spot price between afSUI and ksui in pool 0x52ac89ee8c446638930f53129803f026a04028d2c0deef314321f71c69ab7f78?",
